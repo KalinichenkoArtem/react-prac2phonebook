@@ -1,22 +1,35 @@
 import { Component } from 'react';
-import { nanoid } from 'nanoid';
 
-import { Form, Button, List, ListItem } from './App.styled';
+import PropTypes from 'prop-types';
+import { Form, Button } from 'components/App/App.styled';
 
-class App extends Component {
+class ContactForm extends Component {
   state = {
-    contacts: [],
     name: '',
     number: '',
   };
 
+  handleChange = evt => {
+    const { name, value } = evt;
+    this.setState({ [name]: value });
+  };
+
+  onSubmit = e => {
+    e.preventDefault();
+    this.props.onSubmit(this.state);
+    this.setState({ name: '', number: '' });
+  };
+
   render() {
+    const { name, number } = this.state;
     return (
       <>
-        <h1>Phonebook</h1>
         <Form onSubmit={this.handleSubmit}>
           <label htmlFor="">
+            Name
             <input
+              value={name}
+              onChange={this.handleChange}
               type="text"
               name="name"
               pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -25,7 +38,10 @@ class App extends Component {
             />
           </label>
           <label htmlFor="">
+            Number
             <input
+              onChange={this.handleChange}
+              value={number}
               type="tel"
               name="number"
               pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
@@ -35,13 +51,20 @@ class App extends Component {
           </label>
           <Button>Add contact</Button>
         </Form>
-        <p>Contacts</p>
-        <List>
-          <ListItem></ListItem>
-        </List>
+        <ul>
+          <li>
+            <p>
+              {this.name}:{this.number}
+            </p>
+          </li>
+        </ul>
       </>
     );
   }
 }
 
-export default App;
+export default ContactForm;
+
+ContactForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
